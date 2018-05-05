@@ -9,7 +9,7 @@ SPLUNK_USER=admin
 SPLUNK_PASS=changeme
 
 read -r -d '' helptext <<- EOF
-Project automation development script
+Automation control for docker compose
 Usage:
   $0 <command> [<command> ...]
 
@@ -38,10 +38,12 @@ function build_cmd() {
 }
 
 function test_cmd() {
-  splunk="docker-compose exec splunk splunk"
-  $splunk login -auth $SPLUNK_USER:$SPLUNK_PASS 
+  splunk="docker-compose exec splunk /opt/splunk/bin/splunk"
+  $splunk login -auth $SPLUNK_USER:$SPLUNK_PASS
   $splunk remove app $APPNAME || true
   $splunk install app $PACKAGE
+  docker-compose exec splunk cp -rf test/local /opt/splunk/etc/apps/$APPNAME
+  $splunk restart
 }
 
 function clean_cmd() {

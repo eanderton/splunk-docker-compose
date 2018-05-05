@@ -1,5 +1,3 @@
-# launch with `docker-compose up -d`
-
 version: '3'
 
 volumes:
@@ -10,7 +8,6 @@ services:
   splunk:
     hostname: splunkenterprise
     image: splunk/splunk:latest
-    entrypoint: /sbin/entrypoint.sh
     environment:
       SPLUNK_START_ARGS: --accept-license --answer-yes
       SPLUNK_ENABLE_LISTEN: 9997
@@ -32,4 +29,6 @@ services:
     image: python:2
     working_dir: /workspace
     volumes:
+      - opt-splunk-etc:/opt/splunk/etc
+      - opt-splunk-var:/opt/splunk/var
       - .:/workspace
