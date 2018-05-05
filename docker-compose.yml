@@ -10,6 +10,7 @@ services:
   splunk:
     hostname: splunkenterprise
     image: splunk/splunk:latest
+    entrypoint: /sbin/entrypoint.sh
     environment:
       SPLUNK_START_ARGS: --accept-license --answer-yes
       SPLUNK_ENABLE_LISTEN: 9997
