@@ -55,17 +55,20 @@ function splunk_cmd() {
   docker-compose exec splunk bash
 }
 
-function help() {
+function help_cmd() {
   echo "$helptext"
   exit 1
 }
 
-function main() {
-  if [[ $# = 0 ]]; then help; fi
-  valid_commands="$(declare -F -p | cut -d " " -f 3 | grep '\w\+_cmd' | awk 1 ORS='\\|')help"
-  for command in $@; do
-    if (echo "${command}_cmd" | grep "$valid_commands" > /dev/null); then set -e; ${command}_cmd; else help; fi
-  done
-}
-
-main "$@"
+# run commands
+if [[ $# = 0 ]]; then help_cmd; fi
+for command in $@; do
+  case $command in 
+	start) start_cmd;;
+	build) build_cmd;;
+	test) test_cmd;;
+	clean) clean_cmd;;
+	splunk) splunk_cmd;;
+	*) help_cmd;;
+  esac
+done
