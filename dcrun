@@ -1,0 +1,84 @@
+#!/bin/bash -u
+
+PACKAGE=musicdashboardtutorial
+VERSION=1.0.0
+TARGET=$PACKAGE-$VERSION
+
+read -r -d '' helptext <<- EOF
+Project automation development script
+Useage:
+  $0 <command>
+
+Valid commands:
+  help - shows this message
+  start - start containers
+  stop - tear down containers
+  build - build software
+  test - install and run software
+  clean - cleans up environment
+EOF
+
+function start() {
+  docker-compose down
+  docker-compose up -d
+}
+
+function stop() {
+  docker-compose down
+}
+
+function build() {
+  rm -rf $TARGET
+  cp -r $PACKAGE $TARGET
+  tar czf $TARGET.tar.gz $TARGET
+  rm -rf $TARGET
+}
+
+function test() {
+  splunk="docker-compose exec splunk /opt/splunk/bin/splunk"
+  $splunk remove app $PACKAGE
+  $splunk install app $TARGET.tar.gz
+}
+
+function clean() {
+  rm -f $TARGET $TARGET.tar.gz
+}
+
+function help() {
+  echo "$helptext"
+  exit 1
+}
+
+# if no arguments show help
+if [[ $# = 0 ]]; then
+  help
+fi
+
+# process command
+command=$1
+shift 2
+case $command in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  build)
+    build
+    ;;
+  test)
+    test
+    ;;
+  clean)
+    clean
+    ;;
+  help)
+    showhelp
+    ;;
+  *)
+    showhelp
+    ;;
+esac
+
+

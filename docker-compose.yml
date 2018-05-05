@@ -1,0 +1,34 @@
+# launch with `docker-compose up -d`
+
+version: '3'
+
+volumes:
+  opt-splunk-etc:
+  opt-splunk-var:
+
+services:
+  splunk:
+    hostname: splunkenterprise
+    image: splunk/splunk:latest
+    environment:
+      SPLUNK_START_ARGS: --accept-license --answer-yes
+      SPLUNK_ENABLE_LISTEN: 9997
+      SPLUNK_ADD: tcp 1514
+      SPLUNK_USER: root
+    working_dir: /workspace
+    volumes:
+      - opt-splunk-etc:/opt/splunk/etc
+      - opt-splunk-var:/opt/splunk/var
+      - .:/workspace
+    ports:
+      - "8000:8000"
+      - "9997:9997"
+      - "8088:8088"
+      - "1514:1514"
+    restart: always
+
+  python2:
+    image: python:2
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
