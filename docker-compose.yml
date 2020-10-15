@@ -26,7 +26,9 @@ services:
     restart: always
 
   python2:
-    image: python:2
+    build:
+      context: .
+      dockerfile: Dockerfile.python2
     working_dir: /workspace
     volumes:
       - opt-splunk-etc:/opt/splunk/etc

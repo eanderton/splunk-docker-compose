@@ -2,8 +2,7 @@
 
 APPNAME=musicdashboardtutorial
 VERSION=1.0.0
-TARGET=$APPNAME-$VERSION
-PACKAGE=$APPNAME-$VERSION.spl
+PACKAGE=$APPNAME-$VERSION.tar.gz
 BUILDDIR=build
 SPLUNK_USER=admin
 SPLUNK_PASS=changeme
@@ -14,30 +13,33 @@ Usage:
   $0 <command> [<command> ...]
 
 Valid commands:
-  help - shows this message
+  help  - shows this message
   start - start containers
   build - build software
-  test - install and run software
-  splunk - interactive splunk shell
+  test  - install and run software
   clean - cleans up environment
+  
+Splunk container shortcuts:
+  splunk-shell - interactive shell
+
+Python2 container shortcuts:
+  python2-shell - interactive BASH shell
+  python2       - interactive python prompt
 EOF
 
-function start_cmd() {
+function start() {
   docker-compose down
   docker-compose up -d
 }
 
-function build_cmd() {
-  rm -rf $BUILDDIR 
-  mkdir -p $BUILDDIR
-  cp -r $APPNAME $BUILDDIR
-  pushd $BUILDDIR 
-  tar czf $PACKAGE $APPNAME
-  cp -f $PACKAGE ..
-  popd
+function build() {
+  slim="docker-compose run python2 slim"
+  $slim validate $APPNAME
+  $slim describe $APPNAME
+  $slim package $APPNAME
 }
 
-function test_cmd() {
+function test() {
   splunk="docker-compose exec splunk /opt/splunk/bin/splunk"
   $splunk login -auth $SPLUNK_USER:$SPLUNK_PASS
   $splunk remove app $APPNAME || true
@@ -46,29 +48,40 @@ function test_cmd() {
   $splunk restart
 }
 
-function clean_cmd() {
+function clean() {
   docker-compose down
   rm -rf $BUILDDIR $PACKAGE
 }
 
-function splunk_cmd() {
+function splunk-shell() {
   docker-compose exec splunk bash
 }
 
-function help_cmd() {
+function python2() {
+  docker-compose run python2
+}
+
+function python2-shell() {
+  docker-compose run python2 bash
+}
+
+function help() {
   echo "$helptext"
   exit 1
 }
 
 # run commands
-if [[ $# = 0 ]]; then help_cmd; fi
+if [[ $# = 0 ]]; then help; fi
 for command in $@; do
   case $command in 
-	start) start_cmd;;
-	build) build_cmd;;
-	test) test_cmd;;
-	clean) clean_cmd;;
-	splunk) splunk_cmd;;
-	*) help_cmd;;
+	start) start;;
+	build) build;;
+	test) test;;
+	clean) clean;;
+	splunk) splunk;;
+	splunk-shell) splunk-shell;;
+	python2) python2;;
+	python2-shell) python2-shell;;
+	*) help;;
   esac
 done

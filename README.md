@@ -16,7 +16,7 @@ distinct containers that may have different properties for specific tasks.
 
 The automation script, `acdc` is used to run various different commands via `docker-compose`
 in order to build and test the application against the Splunk container.  In a more involved
-project, this script would contain more targets and might be replaced with either `paver`, 'Make',
+project, this script would contain more targets and might be replaced with either `paver`, `Make`,
 or any number of other build automation tools.
 
 To see the project in action, first install Docker and docker-compose.  Then launch a BASH shell,
@@ -24,7 +24,7 @@ and run the following command:
 
 ```
 ./acdc start build test
-``
+```
 
 Splunk will be browsable via http://127.0.0.1:8000.  The Musical Dashbord app should be viewable 
 under Apps.
@@ -33,7 +33,7 @@ under Apps.
 When done, simply clean up the environment:
 ```
 ./acdc clean
-``
+```
 
 This will destroy all containers associated with the project, and remove all intermediate files.
 

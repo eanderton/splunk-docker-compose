@@ -1,0 +1,11 @@
+From python:2
+
+RUN pip install \
+ semantic-version \
+ splunk-sdk
+
+RUN cd /tmp \
+ && wget http://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.0.tar.gz \
+ && pip install splunk-packaging-toolkit-1.0.0.tar.gz
+
+
